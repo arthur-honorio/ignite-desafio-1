@@ -16,14 +16,42 @@ export function TaskList() {
 
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    let randomId = Math.random()
+    let usedId : number[] = []
+    while(usedId.includes(randomId)){
+      randomId = Math.random()
+    }
+    usedId.push(randomId)
+
+    newTaskTitle && setTasks(oldTasks => [
+      ...oldTasks,
+      {
+        id: randomId,
+        title: newTaskTitle,
+        isComplete: false,
+      }
+    ])
+    setNewTaskTitle("")
+
+    console.log(usedId)
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    let newTasks = tasks.map(task => {
+      if(task.id === id) {
+        return {...task, isComplete: !task.isComplete}
+      } else { return task }
+    })
+
+    setTasks(newTasks)
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
+    const newTasks = tasks.filter(task => task.id !== id)
+    console.log(newTasks)
+    setTasks(newTasks)
   }
 
   return (
@@ -32,9 +60,9 @@ export function TaskList() {
         <h2>Minhas tasks</h2>
 
         <div className="input-group">
-          <input 
-            type="text" 
-            placeholder="Adicionar novo todo" 
+          <input
+            type="text"
+            placeholder="Adicionar novo todo"
             onChange={(e) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
           />
@@ -50,7 +78,7 @@ export function TaskList() {
             <li key={task.id}>
               <div className={task.isComplete ? 'completed' : ''} data-testid="task" >
                 <label className="checkbox-container">
-                  <input 
+                  <input
                     type="checkbox"
                     readOnly
                     checked={task.isComplete}
@@ -66,7 +94,7 @@ export function TaskList() {
               </button>
             </li>
           ))}
-          
+
         </ul>
       </main>
     </section>
